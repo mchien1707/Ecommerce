@@ -1,0 +1,111 @@
+﻿@model ProjectTraining.Models.Warehouse
+
+@{
+    ViewData["Title"] = "Add";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<aside>
+    <div id="sidebar" class="nav-collapse">
+
+        <div class="leftside-navigation">
+            <ul class="sidebar-menu" id="nav-accordion">
+                <li>
+                    <a href="/Admin/Orders">
+                        <i class="fas fa-wallet"></i>
+                        <span>Quản lý đơn hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Products/">
+                        <i class="fa fa-book"></i>
+                        <span>Quản lý sản phẩm</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Kinds">
+                        <i class="fas fa-list-alt"></i>
+                        <span>Quản lý danh mục</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Users">
+                        <i class="fa fa-user"></i>
+                        <span>Quản lý người dùng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Comments">
+                        <i class="fas fa-comment"></i>
+                        <span>Quản lý bình luận</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Discounts">
+                        <i class="fas fa-address-book"></i>
+                        <span>Quản lý giảm giá</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Warehouses" class="active">
+                        <i class="fas fa-address-book"></i>
+                        <span>Quản lý kho</span>
+                    </a>
+                </li>
+                <li>
+                    <form action="@Url.Action("HandleLogout", "Login", new { area = "Admin" })" method="post">
+                        <input class="inputLogout" type="submit" value="Đăng xuất" />
+                    </form>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</aside>
+<!--main content start-->
+<section id="main-content">
+    <section class="wrapper" id="adminContent">
+        <h3 class="title_component">NHẬP HÀNG VÀO KHO</h3>
+        <form action="@Url.Action("Add", "Warehouses", new { area = "Admin" })" method="post" class="form-add" enctype="multipart/form-data">
+            <input type="hidden" name="ProductId" value="@Model.ProductId" />
+            <input type="hidden" name="WarehouseId" value="@Model.WarehouseId" />
+            <input type="hidden" name="ProductDescription" value="@Model.Product.ProductDescription" />
+            <input type="hidden" name="ProductImage" value="@Model.Product.ProductImage" />
+            <input type="hidden" name="KindId" value="@Model.Product.KindId" />
+            <input type="hidden" name="DiscountId" value="@Model.Product.DiscountId" />
+            <input type="hidden" name="CreateDate" value="@Model.Product.CreateDate" />
+
+            <p>Tên sản phẩm</p>
+            <input type="text" name="ProductName" class="input_el banned" placeholder="Nhập tên sản phẩm" id="nameProduct" value="@Model.Product.ProductName" readonly />
+            <p>Hình ảnh</p>
+            <img src="~/imgProduct/@Model.Product.ProductImage" alt="Product image" id="imagePreview" style="width: 7rem; height: 7rem;margin-bottom:0.5rem" />
+            <p>Loại sản phẩm</p>
+            <input type="text" name="KindName" step=0.01 class="input_el banned" placeholder="Thế loại" id="priceProduct" value="@Model.Product.Kind.KindName" readonly />
+            <p>Giá nhập</p>
+            <input type="number" name="ImportPrice" step=0.01 class="input_el" placeholder="Nhập giá nhập" id="priceProduct" value="@Model.ImportPrice" required />
+            <p>Giá bán</p>
+            <input type="number" name="ExportPrice" step=0.01 class="input_el" placeholder="Nhập giá bán" id="priceProduct" value="@Model.ExportPrice" required />
+            <p>Số lượng nhập thêm</p>
+            <input type="number" name="SLNhap" class="input_el" placeholder="Số lượng nhập" required />
+
+            <p>Số lượng hiện tại</p>
+            <input type="number" name="Quantities" class="input_el banned" placeholder="Số lượng nhập" value="@Model.Quantities" readonly />
+            <p>Số lượng đã bán</p>
+            <input type="number" name="Solded" class="input_el banned" placeholder="Số lượng bán" value="@Model.Quantities" readonly />
+            <p>Ngày nhập hàng gần nhất</p>
+            <input type="text" name="DateImport" class="input_el banned" value="@Model.DateImport"  readonly />
+            <input type="submit" value="Nhập" class="btn btn-primary" style="margin-top: 1rem;" />
+        </form>
+    </section>
+</section>
+<script>
+    console.log($('input'));
+    for (let i = 0; i < $('input').length; i++) {
+        if ($(this).attr('readonly')) {
+            console.log("aaaa");
+        }
+        
+    }
+    //if. ($('input').is('[readonly]')) {
+    //    $('').css("background-color", "gray");
+    //}
+</script>

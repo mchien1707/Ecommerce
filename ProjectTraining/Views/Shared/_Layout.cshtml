@@ -1,0 +1,273 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <!--Bootstrap-->
+    <link rel="stylesheet" href="~/css/importStyle/bootstrap.min.css">
+    <!--custom styles-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/css/importStyle/header.css">
+    <link rel="stylesheet" type="text/css" href="~/css/importStyle/footer.css">
+    <link rel="stylesheet" href="~/css/importStyle/home.css">
+    <link rel="stylesheet" href="~/css/importStyle/style.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/importStyle/collection.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/fontawesome/css/all.min.css">
+
+    <link rel="stylesheet" type="text/css" href="~/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/fonts/iconic/css/material-design-iconic-font.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/css/importStyle/animate.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/css/importStyle/hamburgers.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/css/importStyle/animsition.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/css/importStyle/select2.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/css/importStyle/daterangepicker.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/css/importStyle/util.css">
+    <link rel="stylesheet" type="text/css" href="~/css/importStyle/main.css">
+
+    <!--Toast Lib-->
+    <script src="~/lib/tata-master/dist/tata.js"></script>
+
+</head>
+<body>
+    <!-- HEADER TOP -->
+    <div class="header-top">
+        <div class="container2">
+            <div class="row">
+                <div class="col-md-4">
+                    <ul class="right">
+                        <li class="menu-item-border">
+                            <a class="item" href="#"><img src="~/images/flagen.webp"> English</a>
+                        </li>
+                        <li class="menu-item"><a class="item" href="#">đ VNĐ</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-8 ">
+                    <ul class="left" id="accountLogin">
+                        @{
+                            var user = Context.Session.GetString("userLogin");
+                            if (user == null)
+                            {
+                                <!-- Chưa đăng nhập-->
+                                <li class="menu-item-border">
+                                    <a class="item" href="/Cart"><i class="fas fa-list-alt"></i>Track your order</a>
+                                </li>
+                                <li class="menu-item-border">
+                                    <a class="item" href="/Users/SignUp"><i class="fas fa-user"></i>Create Account</a>
+                                </li>
+                                <li class="menu-item">
+                                    <a class="item" href="/Users/Index"><i class="fas fa-sign-in-alt"></i>Login</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <!--Đăng nhập-->
+                                var dataUser = JsonConvert.DeserializeObject<UserInfo>(user);
+                                <li class="menu-item-border">
+                                    <a class="item" href="/Cart"><i class="fas fa-list-alt"></i>Track your order</a>
+                                </li>
+                                <li class="menu-item-border">
+                                    <a class="item" href="#"><i class="fas fa-user"></i>@dataUser.LastName</a>
+                                </li>
+                                <li class="menu-item">
+                                    <form action="/Users/HandleLogout" id="logout" method="post">
+                                        <a class="item" onclick="document.getElementById('logout').submit()">
+                                            <i class="fas fa-sign-in-alt"></i>Log out
+                                        </a>
+                                    </form>
+                                    
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- HEADER MIDDLE -->
+    <div id="header-middle">
+        <div class="header-middle">
+            <div class="container2">
+                <div class="header-middle-inner">
+                    <div class="row">
+                        <div id="logo" class="col-md-3">
+                            <div class="logo">
+                                <a href="/Home/Index">
+                                    <img style="width: 240px;" src="~/images/logo.webp" class="img-responsive">
+                                </a>
+                                <i class="fas fa-align-justify icon-res" data-toggle="collapse"
+                                   data-target="#menu-res"></i>
+                            </div>
+                        </div>
+                        <div id="menu-bar" class="col-md-6">
+                            <div class="box-header-nav">
+                                <ul class="main-menu">
+                                    <li class="main-menu-item">
+                                        <span class="hot">HOT</span>
+                                        <a class="menu-lv1" href="/Home/Index">HOME</a>
+                                    </li>
+
+                                    <li class="main-menu-item">
+                                        <span class="new">NEW</span>
+                                        <a class="menu-lv1" href="/Home/Shopping">SHOP</a>
+                                    </li>
+                                    <li class="main-menu-item">
+                                        <a class="menu-lv1" href="#">SUPPORT</a>
+                                    </li>
+                                    <li class="main-menu-item">
+                                        <a class="menu-lv1" href="#">CONTACT US</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="phone-number" class="col-md-3">
+                            <div class="phone">
+                                <i class="fas fa-phone-volume"></i><a href="tel:0909-090-999" style="color: #000;">0909-090-999</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- HEADER NAV -->
+    <div id="header-nav">
+        <div class="header-nav">
+            <div class="container2">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="all-department">
+                            <a href="#">
+                                <span class="text-title">All Departments</span>
+                            </a>
+                            <i class="fas fa-align-justify" data-toggle="collapse" data-target="#category"></i>
+                        </div>
+                        @await Component.InvokeAsync("Menu")
+                    </div>
+                    <div id="search-2" class="col-md-4">
+                        <div class="search__container">
+                            <form action="/Search" method="get">
+                                <input class="search__input" type="text" name="key" placeholder="Search" />
+                            </form>
+                        </div>
+                    </div>
+                    <div id=" block-link" class="col-md-4">
+                        <div class="shop-cart">
+                            <a href="/Cart" class="block-link">
+                                <i class="fas fa-shopping-cart"></i>
+                                @{
+                                    var cart = Context.Session.GetString("cart");
+                                    int count = 0;
+                                    if (cart == null)
+                                    {
+                                        count = 0;
+                                        <span class="count" id=countproduct>@count</span>
+                                    }
+                                    else
+                                    {
+                                        List<ItemCart> dataCart = JsonConvert.DeserializeObject<List<ItemCart>>(cart);
+                                        foreach (var item in dataCart)
+                                        {
+                                            count += (int)item.Quantities;
+                                        }
+                                        <span class="count" id=countproduct>@count</span>
+                                    }
+                                }
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @RenderBody()
+    <!-- FOOTER -->
+<div id="footer">
+    <div class="content-footer">
+        <div class="container2">
+            <div class="row" style="width: 100%">
+                <!-- contact -->
+                <div class="footer-column col-lg-3 col-md-12">
+
+                    <a class="logo d-block" href="https://amanto-store-demo.myshopify.com">
+
+                        <img src="~/images/logo_white.webp" width="230px" class="image-fluid">
+
+                    </a>
+                    <h3 style="color:#fff">Contact</h3>
+                    <div id="contact" class="contact">
+                        <p style="color:#999">
+                            <strong>E :</strong> mchien1707@gmail.com
+                        </p>
+                        <p style="color:#999">
+                            <strong>VN :</strong> 0909-090-999
+                        </p>
+                        <p style="color:#999">
+                            <strong>International :</strong> +84123 333 7777
+                        </p>
+                    </div>
+
+                </div>
+                <!-- about us -->
+                <div class="footer-column col-lg-3 col-sm-6 col-12">
+
+                    <h3 style="color:#fff">ABOUT US</h3>
+                    <ul class="list-unstyled">
+                        <li><a style="color:#999" href="/">Scotch Corporate</a></li>
+                        <li><a style="color:#999" href="/">Careers</a></li>
+                        <li><a style="color:#999" href="/">Privacy Policy</a></li>
+                        <li><a style="color:#999" href="/">Terms of Use</a></li>
+                        <li><a style="color:#999" href="/">Why Buy Direct</a></li>
+                        <li><a style="color:#999" href="/">Newsletter</a></li>
+                    </ul>
+
+                </div>
+                <!-- SUPPORT -->
+                <div class="footer-column col-lg-3 col-sm-6 col-12">
+
+                    <h3 style="color:#fff">SUPPORT</h3>
+                    <ul class="list-unstyled">
+                        <li><a style="color:#999" href="#">Customer Support</a></li>
+                        <li><a style="color:#999" href="#">Shipping Policy</a></li>
+                        <li><a style="color:#999" href="#">Returns</a></li>
+                        <li><a style="color:#999" href="#">Order Status</a></li>
+                        <li><a style="color:#999" href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+                <!-- PAYMENT AND FOLLOW -->
+                <div class="footer-column col-lg-3 col-sm-6 col-12">
+                    <div class="payment_methods">
+                        <h3 style="color:#fff">WE ACCEPT</h3>
+                        <img src="~/images/payment-method.png" alt="payment" class="img-responsive">
+                    </div>
+                    <div id="follow" class="follow">
+                        <h3 style="color:#fff">Follow us</h3>
+                        <a href="https://twitter.com/">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://facebook.com/">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://youtube.com/">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

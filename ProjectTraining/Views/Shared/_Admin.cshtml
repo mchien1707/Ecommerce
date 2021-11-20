@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Admin - @ViewData["Title"]</title>
+    <!-- bootstrap-css -->
+    <link rel="stylesheet" href="~/css/importStyle/bootstrap.min.css">
+    <!-- //bootstrap-css -->
+    <!-- Custom CSS -->
+    <link href="~/css/importStyle/style_admin.css" rel='stylesheet' asp-append-version="true">
+    <link href="~/css/importStyle/style_admin_responsive.css" rel="stylesheet" type="text/html">
+    <!-- font CSS -->
+    <link rel="stylesheet" href="~/fontawesome/css/all.min.css">
+    <!-- font-awesome icons -->
+    <!-- //font-awesome icons -->
+    <script src="~/js/importJs/jquery2.0.3.min.js"></script>
+    <link rel="stylesheet" href="~/css/importStyle/main.css">
+    <link rel="stylesheet" href="~/css/importStyle/util.css">
+</head>
+
+<body>
+    <section id="container">
+        <header class="header fixed-top clearfix">
+            <div class="brand">
+                <a href="/Admin/Orders/Index" class="logo">
+                    Admin
+                </a>
+                <div class="sidebar-toggle-box">
+                    <div class="fa fa-bars"></div>
+                </div>
+            </div>
+        </header>
+        @RenderBody()
+    </section>
+    <script src="~/js/importJs/bootstrap.js"></script>
+    <script src="~/js/importJs/jquery.dcjqaccordion.2.7.js"></script>
+    <script src="~/js/importJs/scripts.js"></script>
+    <script src="~/js/importJs/jquery.slimscroll.js"></script>
+    <script src="~/js/importJs/jquery.nicescroll.js"></script>
+    <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="js/flot-chart/excanvas.min.js"></script><![endif]-->
+    <script src="~/js/importJs/jquery.scrollTo.js"></script>
+
+</body>

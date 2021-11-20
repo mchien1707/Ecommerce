@@ -1,0 +1,106 @@
+﻿@model ProjectTraining.Models.ProductData
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<script type="text/javascript" src="~/lib/ckeditor/ckeditor.js"></script>
+<aside>
+    <div id="sidebar" class="nav-collapse">
+
+        <div class="leftside-navigation">
+            <ul class="sidebar-menu" id="nav-accordion">
+                <li>
+                    <a href="/Admin/Orders">
+                        <i class="fas fa-wallet"></i>
+                        <span>Quản lý đơn hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Products/" class="active">
+                        <i class="fa fa-book"></i>
+                        <span>Quản lý sản phẩm</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Kinds">
+                        <i class="fas fa-list-alt"></i>
+                        <span>Quản lý danh mục</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Users">
+                        <i class="fa fa-user"></i>
+                        <span>Quản lý người dùng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Comments">
+                        <i class="fas fa-comment"></i>
+                        <span>Quản lý bình luận</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Discounts">
+                        <i class="fas fa-address-book"></i>
+                        <span>Quản lý giảm giá</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Warehouses">
+                        <i class="fas fa-address-book"></i>
+                        <span>Quản lý kho</span>
+                    </a>
+                </li>
+                <li>
+                    <form action="@Url.Action("HandleLogout", "Login", new { area = "Admin" })" method="post">
+                        <input class="inputLogout" type="submit" value="Đăng xuất" />
+                    </form>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</aside>
+<!--main content start-->
+<section id="main-content">
+    <section class="wrapper" id="adminContent">
+        <h3 class="title_component">CẬP NHẬT SẢN PHẨM</h3>
+        <form action="@Url.Action("Edit", "Products", new { area = "Admin" })" method="post" class="form-add" enctype="multipart/form-data">
+            <input type="number" name="ProductId" style="display: none" value="@Model.ProductId" />
+            <input type="text" name="CreateDate" style="display: none" value="@Model.CreateDate" />
+            <p>Tên sản phẩm</p>
+            <input type="text" name="ProductName" class="input_el" placeholder="Nhập tên sản phẩm" id="nameProduct" value="@Model.ProductName" required />
+            <p>Hình ảnh</p>
+            <img src="~/imgProduct/@Model.ProductImageName" alt="Product image" id="imagePreview" style="width: 7rem; height: 7rem;margin-bottom:0.5rem" />
+            <input type="file" name="ProductImage" class="input_el" id="selectedFile" style="display: none;" />
+            <input type="button" value="Browse" onclick="document.getElementById('selectedFile').click();" style="display:block; margin-left:1rem" />
+            <div style="display: none">
+                <p>Tên ảnh</p>
+                <input name="ProductImageName" class="form-control" value="@Model.ProductImageName" />
+            </div>
+            <p>Giá bán</p>
+            <input type="number" name="ProductPrice" step=0.01 class="input_el banned" placeholder="Nhập giá" id="priceProduct" value="@Model.ProductPrice" readonly />
+            <p>Loại sản phẩm</p>
+            @Html.DropDownList("KindId", (IEnumerable<SelectListItem>)ViewBag.kindList)
+            <p>Giảm giá</p>
+            @Html.DropDownList("DiscountId", (IEnumerable<SelectListItem>)ViewBag.discountList, "Không chọn")
+            <p>Số lượng</p>
+            <input type="number" name="Quantities"class="input_el" placeholder="Số lượng" value="@Model.Quantities" readonly/>
+            <p class="addproduct-title">Mô tả chi tiết</p>
+            <textarea name="ProductDescription" type="text" placeholder="Nhập mô tả" id='detailsCKEDITOR' required>
+                @Model.ProductDescription
+            </textarea>
+            <input type="submit" value="Cập nhật" class="btn btn-primary" style="margin-top: 1rem;" />
+        </form>
+    </section>
+</section>
+<script type="text/javascript">
+    //var x = document.getElementById("selectedFile");
+    $("#selectedFile").change(function () {
+        $("#imagePreview").attr('src', URL.createObjectURL(this.files[0]));
+        $("#imagePreview").css('display', 'block')
+    })
+    CKEDITOR.replace('detailsCKEDITOR');
+</script>
+

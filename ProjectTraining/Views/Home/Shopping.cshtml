@@ -1,0 +1,197 @@
+﻿@{
+    ViewData["Title"] = "Collection";
+    Layout = "_Layout";
+}
+@model IEnumerable<ProjectTraining.Models.Product>
+<div class="banner">
+    <div class="container2">
+        <div class="banner-image">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <img src="~/images/banner-collection.jpg" class="img-responsive">
+                    <div class="box-content">
+                        <div class="box-info">
+                            <div class="box-title">
+                                <h3 class="titlebig" style="color:#fff;">NEW PRODUCTS</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="collection">
+    <div class="container2">
+        <div class="row">
+            <div class="col-md-7">
+                <h3 id="selected_item">ALL</h3>
+            </div>
+            <div class="col-md-5">
+                <div class="sort-bar" style="width: 100%; position: relative">
+                    <form action="/Filter" method="get" style="position: absolute; right: 0;">
+                        <select name="option" id="SortBy" class="orderby" style="width: 20rem">
+                            <option value="none" selected>--- Lọc sản phẩm ---</option>
+                            <option value="nameASC">Lọc theo Tên, A-Z</option>
+                            <option value="nameDESC">Lọc theo Tên, Z-A</option>
+                            <option value="PriceDESC">Giá, Cao - Thấp</option>
+                            <option value="PriceASC">Giá, Thấp - Cao</option>
+                            <option value="DateDESC">Sản phẩm mới nhất - cũ nhất</option>
+                            <option value="DateASC">Sản phẩm cũ nhất - mới nhất</option>
+                        </select>
+                        <input type="submit" value="Filter" style="padding: 0.5rem; border: 1px solid #51973b; background: white" />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="api">
+            @foreach(var item in Model)
+            {
+            <div class="col-sm-3 pd-30">
+                <div class="product-inner">
+                    <div class="parent2" style="position: relative">
+                        <a href="#">
+                            <img class="img-responsive" src="~/imgProduct/@item.ProductImage">
+                        </a>
+                        @if (item.DiscountId != null && item.Discount.DiscountStart < DateTime.Now && DateTime.Now < item.Discount.DiscountEnd)
+                        {
+                            <span style="position: absolute; right: 5px; background-color: red; border-radius: 50%; top: 5px; padding: 10px 13px; color: white;">
+                                @item.Discount.DiscountPercent<span>%</span>
+                            </span>
+                        }
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">
+                            <a title="" href="/Home/Details/@item.ProductId" tabindex="0">
+                                @item.ProductName
+                            </a>
+                        </div>
+                        @if (item.DiscountId != null)
+                        {
+                            if (item.Discount.DiscountStart < DateTime.Now && DateTime.Now < item.Discount.DiscountEnd)
+                            {
+                                <span class="price" style="text-decoration: line-through">
+                                    @string.Format("{0:#,##0}", item.ProductPrice)<span>đ</span>
+                                </span>
+                                <span class="price">
+                                    @{
+                                        var priceSale = item.ProductPrice - item.ProductPrice * item.Discount.DiscountPercent / 100;
+                                    }
+                                    @string.Format("{0:#,##0}", priceSale)<span>đ</span>
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="price">
+                                    @string.Format("{0:#,##0}", item.ProductPrice)<span>đ</span>
+                                </span>
+                            }
+
+                        }
+                        else
+                        {
+                            <span class="price">
+                                @string.Format("{0:#,##0}", item.ProductPrice)<span>đ</span>
+                            </span>
+                        }
+                    </div>
+                    <!-- group button -->
+                    <div class="group-button">
+                        <div class="view-details tooltip-1">
+                            <span class="tooltiptext">View details</span>
+                            <a href="/Home/Details/@item.ProductId">
+                                <i class="fas fa-search"></i>
+                            </a>
+                        </div>
+                        <div class="add-to-cart tooltip-1">
+                            <span class="tooltiptext">Add to Cart</span>
+                            <button name="add" class="add-to-cart-btn" data-id="@item.ProductId">
+                                <i class="fas fa-shopping-bag"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- group button -->
+                </div>
+            </div>
+            }
+        </div>
+
+        <div>
+            <ul class="pagination">
+                @{
+                    int numberPage = ViewBag.numberPage;
+                    int pageCurrent = ViewBag.pageCurrent;
+                    int offset = 2;
+                    if (pageCurrent > 1)
+                    {
+                        int prevPage = pageCurrent - 1;
+
+                        <li id="liPre" class="page-item">
+                            <a id="btnPre" class="page-link" href="~/Home/Shopping?page=@prevPage">
+                                <i class="fas fa-caret-left"></i>
+                            </a>
+                        </li>
+                    }
+                    int from = pageCurrent - offset;
+                    int to = pageCurrent + offset;
+                    if (from <= 0)
+                    {
+                        from = 1;
+                        to = offset * 2;
+                    }
+                    if (to > numberPage)
+                    {
+                        to = numberPage;
+                    }
+
+                    for (int i = from; i <= to; i++)
+                    {
+                        if (pageCurrent == i)
+                        {
+                            <li class="page-item active">
+                                <a class="page-link" href="~/Home/Shopping?page=@i">@i</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="~/Home/Shopping?page=@i">@i</a>
+                            </li>
+                        }
+                    }
+                    if (pageCurrent < numberPage)
+                    {
+                        int nextPage = pageCurrent + 1;
+                        <li id="liNext" class="page-item">
+                            <a id="btnNext" class="page-link" href="~/Home/Shopping?page=@nextPage">
+                                <i class="fas fa-caret-right"></i>
+                            </a>
+                        </li>
+                    }
+
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    $(".add-to-cart-btn").click(function () {
+        let countProduct = $("#countproduct").html();
+        $("#countproduct").html(parseInt(countProduct) + 1);
+        tata.success('Success', 'Add To Cart', {
+            daruation: 1,
+        });
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("AddToCart", "Cart")",
+            data: {
+                id: $(this).attr("data-id"),
+                quantities: 1,
+            },
+            success: function (data) {
+
+            }
+        })
+    })
+</script>

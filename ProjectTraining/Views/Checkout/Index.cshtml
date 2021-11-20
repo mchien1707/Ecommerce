@@ -1,0 +1,172 @@
+﻿@{
+    ViewData["Title"] = "Check out";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model CartCheckout
+<div class="checkout">
+    <!--Title page-->
+    <h1 class="title-head">CHECK OUT</h1>
+    <!--Main-->
+    <div class="container">
+        <form action="/Checkout/ConfirmCheckout" method="post">
+            <input type="hidden" name="OrderId" value="@ViewBag.OrderId" />
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <div class="billing">
+                        <h6>1. CUSTOMER INFORMATION</h6>
+                        <div class="billing-notSign">
+                            <div class="billing-notSign_info" id="infoUser">
+                                <input type="text" placeholder="Full name" id="billing-name" value="@Model.User.FirstName @Model.User.LastName" required>
+                                <input type="text" placeholder="Phone" id="billing-phone" value="@Model.User.Phone" required>
+                                <input type="text" placeholder="Shipping address" id="billing-newaddr" value="@Model.User.Address">
+                                <textarea name="note" cols="30" rows="5" id="billing-note" placeholder="Note (Ghi không dấu)"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-6" style="margin-bottom: 1rem">
+                    <div class="order-group">
+                        <h6>2. ORDER INFORMATION</h6>
+                        <div id="checkoutProduct">
+                            <div class="order-single">
+                                @foreach (var item in Model.ListItemCart)
+                                {
+                                    <div class="order-single_info">
+                                        <img src="~/imgProduct/@item.Product.ProductImage" style="width: 7rem; height: 7rem">
+                                        <div class="order-product">
+                                            <span class="order-product_name">
+                                                @item.Product.ProductName
+                                            </span>
+                                            <span class="order-prodcut_quantities">x @item.Quantities</span>
+                                        </div>
+                                        <div class="order-single_price">
+                                            @{
+
+                                                var priceSale = 0.0;
+                                                var priceEachProduct = 0.0;
+                                                if (item.Product.DiscountId != null)
+                                                {
+                                                    if (item.Product.Discount.DiscountStart < DateTime.Now && DateTime.Now < item.Product.Discount.DiscountEnd)
+                                                    {
+                                                        priceSale = (float)(item.Product.ProductPrice - (item.Product.ProductPrice * item.Product.Discount.DiscountPercent) / 100);
+                                                    }
+                                                    else
+                                                    {
+                                                        priceSale = (float)item.Product.ProductPrice;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    priceSale = (float)item.Product.ProductPrice;
+                                                }
+                                                priceEachProduct = (float)(item.Quantities * priceSale);
+                                                <span>@string.Format("{0:#,##0}", priceEachProduct)<span>đ</span></span>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <div class="total-orderPrice">
+                                <span class="title-order">Total</span>
+                                <span id="product-Totalprice">0$</span>
+                            </div>
+                            <div class="payments">
+                                <span class="title-order">Payments</span> <br />
+                                <div>
+                                    <div class="payemntsItem">
+                                        <input type="radio" name="payment" class="paymentType">
+                                        <span>
+                                            <img src="~/images/shipp.jpg" alt="" style="width: 5rem; height: 3rem;">
+                                            <span>Thanh toán khi nhận được hàng</span>
+                                        </span>
+                                    </div>
+                                    <input name="onDelivery" id="onDelivery" type="hidden" class="payOnDelivery" value="">
+                                </div>
+                                <div>
+                                    <div class="payemntsItem">
+                                        <input type="radio" name="payment" class="paymentType">
+                                        <span>
+                                            <img src="~/images/vnpay-logo.jpg" alt=""
+                                                 style="width: 5rem; height: 5rem;">
+                                            <span>Thanh toán Online VnPay</span>
+                                        </span>
+                                    </div>
+                                    <div class="bankSelect">
+                                        <select name="VnpayType" id="VnpayType">
+                                            <option value="">---Chọn ngân hàng---</option>
+                                            <option value="">Không chọn</option>
+                                            <option value="NCB">Ngân hàng NCB</option>
+                                            <option value="SACOMBANK">Ngân hàng SacomBank</option>
+                                            <option value="EXIMBANK">Ngân hàng EximBank</option>
+                                            <option value="MSBANK">Ngân hàng MSBANK</option>
+                                            <option value="NAMABANK" Text=" ">Ngân hàng NamABank</option>
+                                            <option value="VISA">Thẻ quốc tế VISA/MASTER</option>
+                                            <option value="VNMART">Ví điện tử VnMart</option>
+                                            <option value="VIETINBANK">Ngân hàng Vietinbank</option>
+                                            <option value="VIETCOMBANK">Ngân hàng VCB</option>
+                                            <option value="HDBANK">Ngân hàng HDBank</option>
+                                            <option value="DONGABANK">Ngân hàng Dong A</option>
+                                            <option value="TPBANK">Ngân hàng TPBank</option>
+                                            <option value="OJB">Ngân hàng OceanBank</option>
+                                            <option value="BIDV">Ngân hàng BIDV</option>
+                                            <option value="TECHCOMBANK">Ngân hàng Techcombank</option>
+                                            <option value="VPBANK">Ngân hàng VPBank</option>
+                                            <option value="AGRIBANK">Ngân hàng Agribank</option>
+                                            <option value="ACB">Ngân hàng ACB</option>
+                                            <option value="OCB">Ngân hàng Phuong Dong</option>
+                                            <option value="SCB">Ngân hàng SCB</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="confirmOrder">
+                                <input type="submit" id="Btn-Order" value="CONFIRM" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $(".paymentType").on("click", function () {
+        $(".bankSelect").css("display", "none");
+        $(".payOnDelivery").val("");
+
+        $(this).parent().next().css("display", "block");
+        $(this).parent().next().val(1);
+
+    })
+</script>
+<script>
+    @{
+        var totalPrice = 0.0;
+        if (Model != null) {
+            @foreach (var item in Model.ListItemCart)
+            {
+                if (item.Product.DiscountId != null)
+                {
+                    if (item.Product.Discount.DiscountStart < DateTime.Now && DateTime.Now < item.Product.Discount.DiscountEnd)
+                    {
+                        totalPrice += ((int)item.Product.ProductPrice - ((int)item.Product.ProductPrice * (int)item.Product.Discount.DiscountPercent / 100)) * (int)item.Quantities;
+                    }
+                    else
+                    {
+                        totalPrice += (float)(item.Product.ProductPrice * (int)item.Quantities);
+                    }
+                }
+                else
+                {
+                    totalPrice += (float)(item.Product.ProductPrice * (int)item.Quantities);
+                }
+            }
+
+        }
+    }
+    $(document).ready(function () {
+        var priceTotal = @totalPrice;
+        $("#product-Totalprice").html(new Intl.NumberFormat("en-US").format(priceTotal) + 'đ');
+    });
+</script>

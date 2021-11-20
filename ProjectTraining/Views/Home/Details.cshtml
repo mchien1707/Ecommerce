@@ -1,0 +1,376 @@
+﻿@model ProjectTraining.Models.Product
+
+@{
+    ViewData["Title"] = Model.ProductName;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="product">
+    <!--Title page-->
+    <h1 class="title-head">
+        PRODUCT INFORMATION
+    </h1>
+    <!--Main-->
+    <div class="container">
+        <div class="row main">
+            <div class="col-md-9" style="background-color: white;
+				border: 1px solid #dddddd;">
+                <div class="row product-info" id="detail_api">
+                    <div class="col-md-7">
+                        <div class="product-image">
+                            <img src="~/imgProduct/@Model.ProductImage" alt="" id="img-1">
+                        </div>
+                    </div>
+                    <div class="col-md-5 product-decription">
+                        <div class="product-inner">
+                            <h5 class="product-name">@Model.ProductName</h5>
+                            <div class="product-price">
+                                @if (Model.DiscountId != null)
+                                {
+                                    if (Model.Discount.DiscountStart < DateTime.Now && DateTime.Now < Model.Discount.DiscountEnd)
+                                    {
+                                        var priceSale = Model.ProductPrice - Model.ProductPrice * Model.Discount.DiscountPercent / 100;
+                                        <span class="current-price">@string.Format("{0:#,##0}", priceSale)<span>đ</span></span>
+                                        <span class="old-price">
+                                            @string.Format("{0:#,##0}", Model.ProductPrice)<span>đ</span>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="current-price">@string.Format("{0:#,##0}", Model.ProductPrice)<span>đ</span></span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="current-price">@string.Format("{0:#,##0}", Model.ProductPrice)<span>đ</span></span>
+                                }
+                            </div>
+                            <div class="quantities">
+                                <h6>Quantity</h6>
+                                <input type="button" class="change" value="-" onclick="updown(this.value)">
+                                <input type="text" class="value" id="valueQuantities" value="1" readonly>
+                                <input type="button" class="change" value="+" onclick="updown(this.value)">
+                            </div>
+                            <div class="buy">
+                                <i class="fas fa-shopping-cart icon-addtocart"></i>
+                                <button data-id="@Model.ProductId" class="addtocart-decrip" id="AddToCart">Add to cart</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="policy">
+                    <h6 class="policy-title">PURCHASING POLICY</h6>
+                    <div class="policy-detail">
+                        <ul>
+                            <li>
+                                <span class="policy-counter">1</span><span class="policy-item">
+                                    National
+                                    delivery/shipping
+                                </span>
+                            </li>
+                            <li>
+                                <span class="policy-counter">2</span><span class="policy-item">
+                                    Payment on
+                                    delivery
+                                </span>
+                            </li>
+                            <li>
+                                <span class="policy-counter">3</span><span class="policy-item">
+                                    Guaranteed
+                                    quality
+                                </span>
+                            </li>
+                            <li>
+                                <span class="policy-counter">4</span><span class="policy-item">
+                                    Refunds & exchange
+                                    within
+                                </span><span style="color: red;"> 10 days</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="policy" style="margin-bottom: 0">
+                    <h6 class="policy-title">PLACE YOUR ORDER</h6>
+                    <div class="policy-detail">
+                        <ul>
+                            <li>
+                                <span class="policy-counter">1</span><span class="policy-item">
+                                    Directly from our
+                                    site
+                                </span>
+                            </li>
+                            <li>
+                                <span class="policy-counter">2</span><span class="policy-item">
+                                    Contact us on 0909
+                                    090 999
+                                </span>
+                            </li>
+                            <li>
+                                <span class="policy-counter">3</span><span class="policy-item">
+                                    Our physical store at
+                                    5/12A, Quang Trung st, ward 14, Go Vap district, HCM city
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Detail product-->
+    <div class="detail">
+        <div class="container">
+            <h1 class="title-head">PRODUCT DETAIL</h1>
+            <div class="decription">
+                @Html.Raw(Model.ProductDescription)
+            </div>
+
+        </div>
+    </div>
+    <!--Comment and Rating-->
+    <div class="cmtandrating">
+        <div class="container">
+            <h1 class="title-head">COMMENT AND RATING</h1>
+
+            <div class="feedback">
+                <div class="container rating-result">
+                    <p class="result-rating">
+                        <span style="color: #4b4949; font-style: italic;">
+                            This is the information that customer evaluate about the product
+                        </span>
+                    </p>
+                </div>
+
+                <!--Form add Comment-->
+                <span class="addCmt-title" id="btn_AddCmt">Add comment</span>
+
+
+            </div>
+            @{
+                var user = Context.Session.GetString("userLogin");
+                if (user == null)
+                {
+                    <script>
+                        $("#btn_AddCmt").on("click", function () {
+                            alert("Vui lòng đăng nhập để thêm bình luận");
+                        })
+                    </script>
+                }
+                else
+                {
+                    var dataUser = JsonConvert.DeserializeObject<UserInfo>(user);
+                    <form class="addCmt">
+                        <p class="name">Name</p>
+                        <input type="text" id="imputName" class="inputComment" placeholder="Enter name" value='@dataUser.LastName' disabled />
+                        <p class="name">Email</p>
+                        <input type="text" id="inputEmail" class="inputComment" placeholder="Enter email"
+                               value='@dataUser.Email' required disabled>
+                        <p class="name">Rate</p>
+                        <div class="addCmt-rate">
+                            <i class="fas fa-star star-check"></i>
+                            <i class="fas fa-star star-check"></i>
+                            <i class="fas fa-star star-check"></i>
+                            <i class="fas fa-star star-check"></i>
+                            <i class="fas fa-star star-check"></i>
+                        </div>
+                        <p class="name">Comment</p>
+                        <div>
+                            <textarea name="" id="contentCmt" placeholder="Comment" required></textarea>
+                        </div>
+                        <div class="submitCmt">
+                            <span class="Btn-submit" onclick="Submit_Comment()">Done</span>
+                        </div>
+                    </form>
+                    <script>
+                        var add = $('.addCmt')[0];
+                        $("#btn_AddCmt").on("click", function () {
+                            if (add.style.display == 'block') {
+                                add.style.display = 'none';
+                            }
+                            else {
+                                add.style.display = 'block';
+                            }
+                        });
+                    </script>
+                    //Star Vote
+                    <script>
+                        var rate = 0;
+                        var starCheck = document.getElementsByClassName('star-check');
+                        for (let i = 0; i < starCheck.length; i++) {
+                            starCheck[i].addEventListener('click', function () {
+                                var itemClick = event.target;
+                                if (itemClick.className.split(' ').length <= 3) {
+                                    itemClick.className += ' ' + 'star-active';
+                                    for (let k = 0; k < i; k++) {
+                                        if (starCheck[k].className.split(' ')[3] !== 'star-active') {
+                                            starCheck[k].className += ' ' + 'star-active';
+                                        }
+                                    }
+                                }
+                                else {
+                                    for (let k = i + 1; k < starCheck.length; k++) {
+                                        starCheck[k].classList.remove('star-active');
+                                    }
+                                }
+                                rate = i + 1;
+                            });
+                        }
+                    </script>
+                    <script>
+                        function formatDate(date) {
+                            var hours = date.getHours();
+                            var minutes = date.getMinutes();
+                            var seconds = date.getSeconds();
+                            var ampm = hours >= 12 ? 'PM' : 'AM';
+                            hours = hours % 12;
+                            hours = hours ? hours : 12; // the hour '0' should be '12'
+                            minutes = minutes < 10 ? '0' + minutes : minutes;
+                            seconds = seconds < 10 ? '0' + seconds : seconds;
+                            var strTime = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+                            return (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + "  " + strTime;
+                        }
+
+                        function Submit_Comment() {
+                            let ProductId = @Model.ProductId;
+                            let UserId = @dataUser.UserId;
+                            let comment = $("#contentCmt").val();
+                            let lengthComment = document.getElementsByClassName('user-rate').length;
+                            $.ajax({
+                                type: "POST",
+                                url: "@Url.Action("AddComment", "Home")",
+                                data: {
+                                    ProductId: ProductId,
+                                    UserId: UserId,
+                                    Comment: comment,
+                                    Rate: rate,
+                                },
+                                success: function (data) {
+                                    document.getElementsByClassName("userCmt")[0].innerHTML += `
+                                        <div class="userinfo">
+                                            <span class="userinfo-avatar">
+                                                <img src="/images/user.png" alt="User Avatar">
+                                            </span>
+                                            <div class="userinfo-more">
+                                                <span class="userinfo-name">@dataUser.LastName</span>
+                                                <div class="user-rate">
+                                                </div>
+                                                <div class="userCmt-content" style="margin-left: 0">
+                                                    <p class="content">
+                                                        ${data.comment}
+                                                    </p>
+                                                </div>
+                                                <div class="userCmt-time" style="margin-left: 0">
+                                                    <span>${formatDate(new Date(data.createDate))}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `
+                                    for (let i = 0; i < 5; i++) {
+                                        if (i < data.rate) {
+                                            document.getElementsByClassName('user-rate')[lengthComment].innerHTML += `
+                                            <i class="fas fa-star star-active"></i>
+                                            `
+                                        }
+                                        else {
+                                            document.getElementsByClassName('user-rate')[lengthComment].innerHTML += `
+                                            <i class="fas fa-star"></i>
+                                            `
+                                        }
+                                    }
+                                }
+                            });
+                            comment = $("#contentCmt").val("");
+                            for (let i = 0; i < 5; i++) {
+                                document.getElementsByClassName('star-check')[i].classList.remove('star-active')
+                            }
+                            $(".addCmt")[0].style.display == 'none';
+                        }
+                    </script>
+                }
+            }
+            <!--Render Comments Product-->
+            <div class="userReview">
+                <div class="userCmt">
+                    @foreach (var item in Model.Comments)
+                    {
+                        <div class="userinfo">
+                            <span class="userinfo-avatar">
+                                <img src="~/images/user.png" alt="User Avatar">
+                            </span>
+                            <div class="userinfo-more">
+                                <span class="userinfo-name">@item.User.LastName</span>
+                                <div class="user-rate">
+                                    @for (int i = 0; i < 5; i++)
+                                    {
+                                        if (i < @item.Rate)
+                                        {
+                                            <i class="fas fa-star star-active"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-star"></i>
+                                        }
+                                    }
+                                </div>
+                                <div class="userCmt-content" style="margin-left: 0">
+                                    <p class="content">
+                                        @item.Comment
+                                    </p>
+                                </div>
+                                <div class="userCmt-time" style="margin-left: 0">
+                                    <span>@item.CreateDate</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+@await Component.InvokeAsync("RelatedProducts");
+
+<script>
+    //Add to cart
+    $("#AddToCart").click(function () {
+        tata.success('Success', 'Add To Cart', {
+            daruation: 1000,
+        });
+        let quantities = $("#valueQuantities").val();
+        let countProduct = $("#countproduct").html();
+        $("#countproduct").html(parseInt(countProduct) + parseInt(quantities));
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("AddToCart", "Cart")",
+            data: {
+                id: $(this).attr("data-id"),
+                quantities: quantities,
+            },
+            success: function (data) {
+            }
+        });
+    })
+    //Tăng giảm số lượng sản phẩm
+    function updown(type) {
+        var quantities = document.getElementsByClassName('value')[0];
+        var quantitieValue = parseInt(quantities.value);
+        switch (type) {
+            case '-':
+                quantitieValue -= 1;
+                if (quantitieValue == 0) {
+                    alert('Số lượng sản phẩm không hợp lệ !!!');
+                    quantitieValue = 1;
+                }
+                break;
+            case '+':
+                quantitieValue += 1;
+                break;
+        }
+        quantities.value = quantitieValue;
+    }
+    //Đóng mở tab bình luận
+    
+</script>

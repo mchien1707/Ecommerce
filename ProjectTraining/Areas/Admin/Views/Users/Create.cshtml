@@ -1,0 +1,91 @@
+﻿@model ProjectTraining.Models.User
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<aside>
+    <div id="sidebar" class="nav-collapse">
+
+        <div class="leftside-navigation">
+            <ul class="sidebar-menu" id="nav-accordion">
+                <li>
+                    <a href="/Admin/Orders">
+                        <i class="fas fa-wallet"></i>
+                        <span>Quản lý đơn hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Products">
+                        <i class="fa fa-book"></i>
+                        <span>Quản lý sản phẩm</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Kinds">
+                        <i class="fas fa-list-alt"></i>
+                        <span>Quản lý danh mục</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Users" class="active">
+                        <i class="fa fa-user"></i>
+                        <span>Quản lý người dùng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Comments">
+                        <i class="fas fa-comment"></i>
+                        <span>Quản lý bình luận</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Discounts">
+                        <i class="fas fa-address-book"></i>
+                        <span>Quản lý giảm giá</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Warehouses">
+                        <i class="fas fa-address-book"></i>
+                        <span>Quản lý kho</span>
+                    </a>
+                </li>
+                <li>
+                    <form action="@Url.Action("HandleLogout", "Login", new { area = "Admin" })" method="post">
+                        <input class="inputLogout" type="submit" value="Đăng xuất" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</aside>
+<!--main content start-->
+<section id="main-content">
+    <section class="wrapper" id="adminContent">
+        <h3 class="title_component">THÊM NGƯỜI DÙNG</h3>
+        <form action="@Url.Action("Create", "Users", new { area = "Admin" })" class="form-add" method="post">
+            <p>Họ</p>
+            <input name="FirstName" type="text" class="input_el" placeholder="Họ" id="username" required>
+            <p>Tên</p>
+            <input name="LastName" type="text" class="input_el" placeholder="Tên" id="username" required>
+            <p>Địa chỉ</p>
+            <input name="Address" type="text" class="input_el" placeholder="Địa chỉ" id="address" required>
+            <p>Số điện thoại</p>
+            <input name="Phone" type="tel" class="input_el" placeholder="Số điện thoại" id="phone" required minlength="9">
+            <p>Email</p>
+            <input name="Email" type="email" class="input_el" placeholder="Email" id="email" required>
+            <p>Mật khẩu</p>
+            <input name="Password" type="password" class="input_el" placeholder="Mật khẩu" id="password" required>
+            @*<p>Nhập lại mật khẩu</p>
+            <input type="password" class="input_el" placeholder="Mật khẩu" id="repassword" required>*@
+            <p>Quyền</p>
+            <select name="Role" id="role" class="inp_product inp_choice">
+                <option value="Admin">Admin</option>
+                <option value="Khách hàng">Khách hàng</option>
+            </select>
+            <br>
+            <input type="submit" value="Thêm người dùng" class="btn btn-primary" />
+        </form>
+    </section>
+</section>

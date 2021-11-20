@@ -1,0 +1,73 @@
+﻿@model ProjectTraining.Models.Kind
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<aside>
+    <div id="sidebar" class="nav-collapse">
+
+        <div class="leftside-navigation">
+            <ul class="sidebar-menu" id="nav-accordion">
+                <li>
+                    <a href="/Admin/Orders">
+                        <i class="fas fa-wallet"></i>
+                        <span>Quản lý đơn hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Products">
+                        <i class="fa fa-book"></i>
+                        <span>Quản lý sản phẩm</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Kinds" class="active">
+                        <i class="fas fa-list-alt"></i>
+                        <span>Quản lý danh mục</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Users">
+                        <i class="fa fa-user"></i>
+                        <span>Quản lý người dùng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Comments">
+                        <i class="fas fa-comment"></i>
+                        <span>Quản lý bình luận</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Discounts">
+                        <i class="fas fa-address-book"></i>
+                        <span>Quản lý giảm giá</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Warehouses">
+                        <i class="fas fa-address-book"></i>
+                        <span>Quản lý kho</span>
+                    </a>
+                </li>
+                <li>
+                    <form action="@Url.Action("HandleLogout", "Login", new { area = "Admin" })" method="post">
+                        <input class="inputLogout" type="submit" value="Đăng xuất" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</aside>
+<!--main content start-->
+<section id="main-content">
+    <section class="wrapper" id="adminContent">
+        <h3 class="title_component">THÊM MỤC SẢN PHẨM</h3>
+        <form action="@Url.Action("Create", "Kinds", new { area = "Admin" })" method="post" class="form-add">
+            <p>Tên mục sản phẩm</p>
+            <input type="text" name="KindName" class="input_el" placeholder="Tên mục sản phẩm mới" id="nameCategory" required>
+            <button type="submit" class="btn btn-primary">Thêm</button>
+        </form>
+    </section>
+</section>

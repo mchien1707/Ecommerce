@@ -1,0 +1,156 @@
+﻿@model IEnumerable<ProjectTraining.Models.Discount>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<aside>
+    <div id="sidebar" class="nav-collapse">
+
+        <div class="leftside-navigation">
+            <ul class="sidebar-menu" id="nav-accordion">
+                <li>
+                    <a href="/Admin/Orders">
+                        <i class="fas fa-wallet"></i>
+                        <span>Quản lý đơn hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Products">
+                        <i class="fa fa-book"></i>
+                        <span>Quản lý sản phẩm</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Kinds">
+                        <i class="fas fa-list-alt"></i>
+                        <span>Quản lý danh mục</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/Admin/Users">
+                        <i class="fa fa-user"></i>
+                        <span>Quản lý người dùng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Comments">
+                        <i class="fas fa-comment"></i>
+                        <span>Quản lý bình luận</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Discounts" class="active">
+                        <i class="fas fa-address-book"></i>
+                        <span>Quản lý giảm giá</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Warehouses">
+                        <i class="fas fa-address-book"></i>
+                        <span>Quản lý kho</span>
+                    </a>
+                </li>
+                <li>
+                    <form action="@Url.Action("HandleLogout", "Login", new { area = "Admin" })" method="post">
+                        <input class="inputLogout" type="submit" value="Đăng xuất" />
+                    </form>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</aside>
+<!--main content start-->
+<section id="main-content">
+    <section class="wrapper" id="adminContent" style="height: 500px !important;">
+        <h3 class="title_component">DANH SÁCH KHUYẾN MÃI</h3>
+        <div class="add-category">
+            <a href="/Admin/Discounts/Create" class="add-category_btn">+ Thêm</a>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th style="width: 15%">Phần trăm giảm</th>
+                    <th style="width: 15%">Ngày bắt đầu</th>
+                    <th style="width: 15%">Ngày kết thúc</th>
+                    <th style="width: 35%">Thông tin khuyến mãi</th>
+                    <th style="width: 20%">Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="listCategoryAdmin">
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.DiscountPercent<span>%</span></td>
+                        <td>@item.DiscountStart</td>
+                        <td>@item.DiscountEnd</td>
+                        <td>@item.DiscountDescription</td>
+                        <td>
+                            <a class="btn btn-warning" type="button" href="/Admin/Discounts/Edit/@item.DiscountId">Chỉnh sửa</a>
+                            <a class="btn btn-danger" type="button" href="/Admin/Discounts/Apply/@item.DiscountId">Áp dụng</a>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+        <div>
+            <ul class="pagination">
+                @{
+                    int numberPage = ViewBag.numberPage;
+                    int pageCurrent = ViewBag.pageCurrent;
+                    int offset = 2;
+                    if (pageCurrent > 1)
+                    {
+                        int prevPage = pageCurrent - 1;
+
+                        <li id="liPre" class="page-item">
+                            <a id="btnPre" class="page-link" href="~/Admin/Discounts/Index?page=@prevPage">
+                                <i class="fas fa-caret-left"></i>
+                            </a>
+                        </li>
+                    }
+                    int from = pageCurrent - offset;
+                    int to = pageCurrent + offset;
+                    if (from <= 0)
+                    {
+                        from = 1;
+                        to = offset * 2;
+                    }
+                    if (to > numberPage)
+                    {
+                        to = numberPage;
+                    }
+
+                    for (int i = from; i <= to; i++)
+                    {
+                        if (pageCurrent == i)
+                        {
+                            <li class="page-item active">
+                                <a class="page-link" href="~/Admin/Discounts/Index?page=@i">@i</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="~/Admin/Discounts/Index?page=@i">@i</a>
+                            </li>
+                        }
+                    }
+                    if (pageCurrent < numberPage)
+                    {
+                        int nextPage = pageCurrent + 1;
+                        <li id="liNext" class="page-item">
+                            <a id="btnNext" class="page-link" href="~/Admin/Discounts/Index?page=@nextPage">
+                                <i class="fas fa-caret-right"></i>
+                            </a>
+                        </li>
+                    }
+
+                }
+            </ul>
+        </div>
+    </section>
+</section>

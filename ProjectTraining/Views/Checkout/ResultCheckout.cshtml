@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Result";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="checkout">
+    <!--Title page-->
+    <h1 class="title-head">RESULT CHECK OUT</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 resultCheckout">
+                @{
+                    if (Model == 0)
+                    {
+                        <span>
+                            Thanh toán thành công
+                        </span>
+                    }
+                    else
+                    {
+
+                        <span> 
+                            Thanh toán thất bại
+                        </span>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

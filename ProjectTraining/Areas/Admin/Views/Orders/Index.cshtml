@@ -1,0 +1,282 @@
+﻿@model IEnumerable<ProjectTraining.Models.Order>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<aside>
+    <div id="sidebar" class="nav-collapse">
+
+        <div class="leftside-navigation">
+            <ul class="sidebar-menu" id="nav-accordion">
+                <li>
+                    <a href="/Admin/Orders" class="active">
+                        <i class="fas fa-wallet"></i>
+                        <span>Quản lý đơn hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Products">
+                        <i class="fa fa-book"></i>
+                        <span>Quản lý sản phẩm</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Kinds">
+                        <i class="fas fa-list-alt"></i>
+                        <span>Quản lý danh mục</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Users">
+                        <i class="fa fa-user"></i>
+                        <span>Quản lý người dùng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Comments">
+                        <i class="fas fa-comment"></i>
+                        <span>Quản lý bình luận</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Discounts">
+                        <i class="fas fa-address-book"></i>
+                        <span>Quản lý giảm giá</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Warehouses">
+                        <i class="fas fa-address-book"></i>
+                        <span>Quản lý kho</span>
+                    </a>
+                </li>
+                <li>
+                    <form action="@Url.Action("HandleLogout", "Login", new { area = "Admin" })" method="post">
+                        <input class="inputLogout" type="submit" value="Đăng xuất" />
+                    </form>
+                </li>
+
+            </ul>
+        </div>
+
+    </div>
+</aside>
+<!--main content start-->
+<section id="main-content">
+    <section class="wrapper" id="adminContent" style="height: 650px!important;">
+        <h3 class="title_component">DANH SÁCH ĐƠN HÀNG</h3>
+        <div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">Mã đơn hàng</th>
+                        <th style="width: 10%">Tên khách hàng</th>
+                        <th style="width: 7%">Phone</th>
+                        <th style="width: 15%">Address</th>
+                        <th style="width: 10%;">Trạng thái giao hàng</th>
+                        <th style="width: 9%;">Hình thức thanh toán</th>
+                        <th style="width: 14%;">Trạng thái thanh toán</th>
+                        <th style="width: 7%;">Tổng tiền</th>
+                        <th style="width: 8%;">Ngày đặt</th>
+                        <th style="width: 7%;">Ghi chú</th>
+                        <th style="width: 8%">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="listBillAdmin">
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.OrderId</td>
+                            <td>@item.User.FirstName @item.User.LastName</td>
+                            <td>@item.User.Phone</td>
+                            <td>@item.User.Address</td>
+                            <td>
+                                @if (item.Status == 0)
+                                {
+                                    <span class="pending status" data-id="[@item.Status, @item.OrderId]">Đang xử lý</span>
+                                }
+                                else if (item.Status == 1)
+                                {
+                                    <span class="shiping status" data-id="[@item.Status, @item.OrderId]">Đang giao</span>
+                                }
+                                else if (item.Status == 2)
+                                {
+                                    <span class="done status" data-id="[@item.Status, @item.OrderId]">Đã giao</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.Type == 1)
+                                {
+                                    <span class="done typePayment" data-id="[@item.Type, @item.OrderId]">Online</span>
+                                }
+                                else
+                                {
+                                    <span class="pending typePayment" data-id="[@item.Type, @item.OrderId]">Trực tiếp</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.PaymentResult == 1)
+                                {
+                                    <span class="done paymentResult" data-id="[@item.PaymentResult , @item.OrderId]">Đã thanh toán</span>
+                                }
+                                else
+                                {
+                                    <span class="pending paymentResult" data-id="[@item.PaymentResult , @item.OrderId]">Chưa thanh toán</span>
+                                }
+                            </td>
+                            <td>@string.Format("{0:#,##0}", @item.Total)<span>đ</span></td>
+                            <td>@item.CreateDate</td>
+                            <td>@item.Note</td>
+                            <td>
+                                <a href="/Admin/Orders/Details/@item.OrderId" class="btn btn-warning">Xem</a>
+                                <form action="/Admin/Orders/CancelOrder/@item.OrderId" method="post">
+                                    <button type="submit" class="btn btn-danger" style="margin-top: 0.3rem">Hủy</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <ul class="pagination">
+                @{
+                    int numberPage = ViewBag.numberPage;
+                    int pageCurrent = ViewBag.pageCurrent;
+                    int offset = 2;
+                    if (pageCurrent > 1)
+                    {
+                        int prevPage = pageCurrent - 1;
+
+                        <li id="liPre" class="page-item">
+                            <a id="btnPre" class="page-link" href="~/Admin/Orders/Index?page=@prevPage">
+                                <i class="fas fa-caret-left"></i>
+                            </a>
+                        </li>
+                    }
+                    int from = pageCurrent - offset;
+                    int to = pageCurrent + offset;
+                    if (from <= 0)
+                    {
+                        from = 1;
+                        to = offset * 2;
+                    }
+                    if (to > numberPage)
+                    {
+                        to = numberPage;
+                    }
+
+                    for (int i = from; i <= to; i++)
+                    {
+                        if (pageCurrent == i)
+                        {
+                            <li class="page-item active">
+                                <a class="page-link" href="~/Admin/Orders/Index?page=@i">@i</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="~/Admin/Orders/Index?page=@i">@i</a>
+                            </li>
+                        }
+                    }
+                    if (pageCurrent < numberPage)
+                    {
+                        int nextPage = pageCurrent + 1;
+                        <li id="liNext" class="page-item">
+                            <a id="btnNext" class="page-link" href="~/Admin/Orders/Index?page=@nextPage">
+                                <i class="fas fa-caret-right"></i>
+                            </a>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </section>
+</section>
+<script>
+    $(".status").on("click", function () {
+        let dataItemOrder = JSON.parse($(this).attr("data-id"));
+        if (dataItemOrder[0] < 2) {
+            let confirmChange = confirm("Thay đổi trạng thái đơn hàng");
+            if (confirmChange) {
+                if (dataItemOrder[0] == 0) {
+                    $(this).removeClass("pending");
+                    $(this).addClass("shiping");
+                    $(this).attr("data-id", `[1, ${dataItemOrder[1]}]`);
+                    $(this).html("Đang giao");
+                }
+                if (dataItemOrder[0] == 1) {
+                    $(this).removeClass("shiping");
+                    $(this).addClass("done");
+                    $(this).attr("data-id", `[2, ${dataItemOrder[1]}]`);
+                    $(this).html("Đã giao");
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("UpdateOrder", "Orders")",
+                    data: {
+                        OrderId: dataItemOrder[1],
+                        status: dataItemOrder[0],
+                    },
+                    success: function (data) {
+                    }
+                })
+            }
+        }
+    });
+    $(".typePayment").on("click", function () {
+        let dataItemOrder = JSON.parse($(this).attr("data-id"));
+        let confirmChange = confirm("Thay đổi Loại thanh toán");
+        if (confirmChange) {
+            if (dataItemOrder[0] == 0) {
+                $(this).removeClass("pending");
+                $(this).addClass("done");
+                $(this).attr("data-id", `[1, ${dataItemOrder[1]}]`);
+                $(this).html("Online");
+            }
+            if (dataItemOrder[0] == 1) {
+                $(this).removeClass("done");
+                $(this).addClass("pending");
+                $(this).attr("data-id", `[0, ${dataItemOrder[1]}]`);
+                $(this).html("Trực tiếp");
+            }
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("UpdateOrder", "Orders")",
+                data: {
+                    OrderId: dataItemOrder[1],
+                    typePayment: dataItemOrder[0],
+                },
+                success: function (data) {
+                }
+            })
+        }
+    });
+    $(".paymentResult").on("click", function () {
+        let dataItemOrder = JSON.parse($(this).attr("data-id"))
+        if (dataItemOrder[0] < 1) {
+            let confirmChange = confirm("Thay đổi trạng thái thanh toán");
+            if (confirmChange) {
+                if (dataItemOrder[0] == 0) {
+                    $(this).removeClass("pending");
+                    $(this).addClass("done");
+                    $(this).attr("data-id", `[1, ${dataItemOrder[1]}]`);
+                    $(this).html("Đã thanh toán");
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("UpdateOrder", "Orders")",
+                    data: {
+                        OrderId: dataItemOrder[1],
+                        paymentResult: dataItemOrder[0],
+                    },
+                    success: function (data) {
+                    }
+                })
+            }
+        }
+    });
+</script>

@@ -1,0 +1,112 @@
+﻿@model IEnumerable<ProjectTraining.Models.OrderDetails>
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<aside>
+    <div id="sidebar" class="nav-collapse">
+        <div class="leftside-navigation">
+            <ul class="sidebar-menu" id="nav-accordion">
+                <li>
+                    <a href="/Admin/Orders" class="active">
+                        <i class="fas fa-wallet"></i>
+                        <span>Quản lý đơn hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Products">
+                        <i class="fa fa-book"></i>
+                        <span>Quản lý sản phẩm</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Kinds">
+                        <i class="fas fa-list-alt"></i>
+                        <span>Quản lý danh mục</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/Admin/Users">
+                        <i class="fa fa-user"></i>
+                        <span>Quản lý người dùng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Comments">
+                        <i class="fas fa-comment"></i>
+                        <span>Quản lý bình luận</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Discounts">
+                        <i class="fas fa-address-book"></i>
+                        <span>Quản lý giảm giá</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Admin/Warehouses">
+                        <i class="fas fa-address-book"></i>
+                        <span>Quản lý kho</span>
+                    </a>
+                </li>
+                <li>
+                    <form action="@Url.Action("HandleLogout", "Login", new { area = "Admin" })" method="post">
+                        <input class="inputLogout" type="submit" value="Đăng xuất" />
+                    </form>
+                </li>
+
+            </ul>
+        </div>
+
+    </div>
+</aside>
+
+<!--main content start-->
+<section id="main-content">
+    <section class="wrapper" id="adminContent">
+        <h3 class="title_component">CHI TIẾT BILL</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th style="width: 10%">Hình ảnh</th>
+                    <th style="width: 20%">Tên sản phẩm</th>
+                    <th style="width: 10%">Số lượng mua</th>
+                    <th style="width: 10%">Tổng giá</th>
+                </tr>
+            </thead>
+            <tbody id="listDetailsBillAdmin">
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td>
+                        <img src="~/imgProduct/@item.Product.ProductImage" alt="Product image">
+                    </td>
+                    <td>@item.Product.ProductName</td>
+                    <td>@item.Quantities</td>
+                    <td>@string.Format("{0:#,##0}", @item.TotalPrice)<span>đ</span></td>
+
+                </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+    <div>
+        <ul class="pagination">
+            <li id="liPre" class="page-item">
+                <a id="btnPre" class="page-link disable" onclick="prePage()">
+                    <i class="fas fa-caret-left"></i>
+                </a>
+            </li>
+            <div id="listPage" class="listPage">
+                <li class="page-item"><a class="page-link">1</a></li>
+            </div>
+            <li id="liNext" class="page-item">
+                <a id="btnNext" class="page-link" onclick="nextPage()">
+                    <i class="fas fa-caret-right"></i> </i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</section>

@@ -1,0 +1,96 @@
+﻿@model IEnumerable<Warehouse>
+<!--Related product-->
+<div class="productRelated">
+    <div class="container">
+        <h1 class="title-head">VIEW MORE</h1>
+        <div class="row productRelated-group">
+            @foreach (var item in Model)
+            {
+                <div class="col-sm-3 pd-30">
+                    <div class="product-inner">
+                        <div class="parent2">
+                            <a href="#">
+                                <img class="img-responsive" src="~/imgProduct/@item.Product.ProductImage">
+                            </a>
+                            @if (item.Product.DiscountId != null && item.Product.Discount.DiscountStart < DateTime.Now && DateTime.Now < item.Product.Discount.DiscountEnd)
+                            {
+                                <span style="position: absolute; right: 5px; background-color: red; border-radius: 50%; top: 5px; padding: 10px 13px; color: white;">
+                                    @item.Product.Discount.DiscountPercent<span>%</span>
+                                </span>
+                            }
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">
+                                <a title='' href="./detail.html">
+                                    @item.Product.ProductName
+                                </a>
+                            </div>
+                            @if (item.Product.DiscountId != null)
+                            {
+                                if (item.Product.Discount.DiscountStart < DateTime.Now && DateTime.Now < item.Product.Discount.DiscountEnd)
+                                {
+                                    <span class="price" style="text-decoration: line-through">
+                                        @string.Format("{0:#,##0}", item.Product.ProductPrice)<span>đ</span>
+                                    </span>
+                                    <span class="price">
+                                        @{
+                                            var priceSale = item.Product.ProductPrice - item.Product.ProductPrice * item.Product.Discount.DiscountPercent / 100;
+                                        }
+                                        @string.Format("{0:#,##0}", priceSale)<span>đ</span>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="price">
+                                        @string.Format("{0:#,##0}", item.Product.ProductPrice)<span>đ</span>
+                                    </span>
+                                }
+
+                            }
+                            else
+                            {
+                                <span class="price">
+                                    @string.Format("{0:#,##0}", item.Product.ProductPrice)<span>đ</span>
+                                </span>
+                            }
+                        </div>
+                        <!-- group button -->
+                        <div class="group-button">
+                            <div class="view-details tooltip-1">
+                                <span class="tooltiptext">View details</span>
+                                <a href="/Home/Details/@item.ProductId">
+                                    <i class="fas fa-search"></i>
+                                </a>
+                            </div>
+                            <div class="add-to-cart tooltip-1">
+                                <span class="tooltiptext">Add to Cart</span>
+                                <button name="add" class="add-to-cart-btn" data-id="@item.ProductId">
+                                    <i class="fas fa-shopping-bag"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- group button -->
+                    </div>
+                </div>
+            }
+        </div>
+        <script>
+            $(".add-to-cart-btn").click(function () {
+                tata.success('Success', 'Add To Cart', {
+                    daruation: 1000,
+                });
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("AddToCart", "Cart")",
+                    data: {
+                    id: $(this).attr("data-id"),
+                    quantities: 1,
+                    },
+                    success: function (data) {
+                    }
+                })
+            })
+        </script>
+    </div>
+</div>
+

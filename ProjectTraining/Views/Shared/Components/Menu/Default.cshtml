@@ -1,0 +1,16 @@
+﻿@model IEnumerable<ProjectTraining.Models.Kind>
+
+<div id="category" class="category collapse">
+    <ul>
+        @foreach (var item in Model)
+        {
+        <li class="menu-category">
+            <a href="/Home/ProductsBrand/@item.KindId">
+                @item.KindName
+                <span class="fas fa-angle-right"></span>
+            </a>
+
+        </li>
+        }
+    </ul>
+</div>

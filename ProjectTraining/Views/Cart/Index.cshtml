@@ -1,0 +1,247 @@
+﻿@{ 
+    ViewData["Title"] = "Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model IEnumerable<ItemCart>
+<div class="cart" id="cart">
+    <!--Title page-->
+    <h1 class="title-head">CART</h1>
+    <!--Main-->
+    <div class="container">
+        <div class="row cart-total">
+            <div class="col-md-9 col-sm-12" style="margin-bottom: 1rem">
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartItem">
+                        @if (Model == null || Model.Count() == 0)
+                        {
+                            <tr>
+                                <td colspan="6">Không có sản phẩm nào trong giỏ hàng</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var item in Model)
+                            {
+                                var priceSale = 0.0;
+                                var priceEachProduct = 0.0;
+                                @if (item.Product.DiscountId != null)
+                                {
+                                    if (item.Product.Discount.DiscountStart < DateTime.Now && DateTime.Now < item.Product.Discount.DiscountEnd)
+                                    {
+                                        priceSale = (float)(item.Product.ProductPrice - (item.Product.ProductPrice * item.Product.Discount.DiscountPercent) / 100);
+                                    }
+                                    else
+                                    {
+                                        priceSale = (float)item.Product.ProductPrice;
+                                    }
+                                }
+                                else
+                                {
+                                    priceSale = (float)item.Product.ProductPrice;
+                                }
+                                priceEachProduct = (float)(item.Quantities * priceSale);
+
+                                <tr>
+                                    <td><input type="button" data-id="@item.ProductId" class="remove" value="X"></td>
+                                    <td>
+                                        <img src="~/imgProduct/@item.Product.ProductImage" alt="Product image">
+                                    </td>
+                                    <td>@item.Product.ProductName</td>
+                                    <td><span>@string.Format("{0:#,##0}", priceSale)</span><span>đ</span></td>
+                                    <td>
+                                        <input type="button" class="change sub" value="-" data-id="@item.ProductId">
+                                        <input type="text" class="value" value="@item.Quantities" readonly>
+                                        <input type="button" class="change plus" value="+" data-id="@item.ProductId">
+                                    </td>
+                                    <td class="total_each_item"><span>@string.Format("{0:#,##0}", priceEachProduct)</span><span>đ</span></td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-3">
+                <table class="cart-table-total">
+                    <thead>
+                        <tr>
+                            <th>Total Orders</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @*<tr>
+                                <td style="height:120px ; text-align: center">
+                                    <label for="">Discount</label>
+                                    <div class="coupon">
+                                        <input type="text" placeholder="Enter discount code">
+                                        <span id="couponCheck">Check</span>
+                                    </div>
+                                </td>
+                            </tr>*@
+                        <tr>
+                            <td style="text-align:center; padding: 10px;">
+                                <label for="">Total</label>
+                                <div>
+                                    <p class="totalpay" id="totalprice">0$</p>
+                                </div>
+                                @{
+                                    var user = Context.Session.GetString("userLogin");
+                                    if (user == null || Model == null)
+                                    {
+                                        <div class="confirm">
+                                            <a class="confirmBtn" id="confirmCart">Confirm</a>
+                                        </div>
+                                        if (user == null)
+                                        {
+                                            <script>
+                                                $("#confirmCart").on("click", function () {
+                                                    alert("Vui lòng đăng nhập để Thanh toán");
+                                                });
+                                            </script>
+                                        }
+                                        if (Model == null)
+                                        {
+                                            <script>
+                                                $("#confirmCart").on("click", function () {
+                                                    alert("Chưa có sản phẩm trong giỏ hàng");
+                                                });
+                                            </script>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="confirm">
+                                            <a href="~/Checkout" class="confirmBtn" id="confirmCart">Confirm</a>
+                                        </div>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @await Component.InvokeAsync("RelatedProducts");
+</div>
+<script>
+    @{
+        var totalPrice = 0.0;
+        if (Model != null) {
+            @foreach (var item in Model)
+            {
+                if (item.Product.DiscountId != null)
+                {
+                    if (item.Product.Discount.DiscountStart < DateTime.Now && DateTime.Now < item.Product.Discount.DiscountEnd)
+                    {
+                        totalPrice += ((int)item.Product.ProductPrice - ((int)item.Product.ProductPrice * (int)item.Product.Discount.DiscountPercent / 100)) * (int)item.Quantities;
+                    }
+                    else
+                    {
+                        totalPrice += (float)(item.Product.ProductPrice * (int)item.Quantities);
+                    }
+                }
+                else
+                {
+                    totalPrice += (float)(item.Product.ProductPrice * (int)item.Quantities);
+                }
+            }
+
+        }
+    }
+    $(document).ready(function () {
+        var priceTotal = @totalPrice;
+        $("#totalprice").html(new Intl.NumberFormat("en-US").format(priceTotal) + 'đ');
+
+        $(".change").on("click", function () {
+            let priceItem = $(this).parent().prev().children().html().replace(/,/g, '');
+
+            switch ($(this).val()) {
+                case '+':
+                    let countProduct = $("#countproduct").html();
+                    $("#countproduct").html(parseInt(countProduct) + 1);
+                    let price_each_item = (parseInt($(this).prev().val()) + 1) * parseInt(priceItem);
+                    $(this).parent().next().first().html(`<span>${new Intl.NumberFormat("en-US").format(price_each_item)}</span><span>đ</span>`);
+                    $(this).prev().val($(this).prev().val() * 1 + 1); //Số lượng SP tăng 1
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("UpdateCart", "Cart")",
+                        data: {
+                            id: parseInt($(this).attr("data-id")),
+                            quantities: parseInt($(this).prev().val()),
+                        },
+                        success: function (data) {
+                        }
+                    })
+                    priceTotal += parseInt(priceItem);
+                    $("#totalprice").html(new Intl.NumberFormat("en-US").format(priceTotal) + 'đ');
+                    break;
+                case '-':
+                    let countProduct1 = $("#countproduct").html();
+                    if ($(this).next().val() * 1 == 1) {
+                        alert("Số lượng sản phẩm không đươc bằng 0");
+                        let price_each_item1 = 1 * parseInt(priceItem);
+                        $(this).parent().next().first().html(`<span>${new Intl.NumberFormat("en-US").format(price_each_item1)}</span><span>đ</span>`);
+                        $(this).next().val(1); //Số lượng SP set lại 1
+                    }
+                    else {
+                        let price_each_item1 = (parseInt($(this).next().val()) - 1) * parseInt(priceItem);
+                        $(this).parent().next().first().html(`<span>${new Intl.NumberFormat("en-US").format(price_each_item1)}</span><span>đ</span>`);
+                        $(this).next().val($(this).next().val() * 1 - 1); //Số lượng SP giảm 1
+                        priceTotal -= parseInt(priceItem);
+                        $("#countproduct").html(parseInt(countProduct1) - 1);
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("UpdateCart", "Cart")",
+                        data: {
+                            id: parseInt($(this).attr("data-id")),
+                            quantities: parseInt($(this).next().val())
+                        },
+                        success: function (data) {
+                        }
+                    })
+                    $("#totalprice").html(new Intl.NumberFormat("en-US").format(priceTotal) + 'đ');
+                    break;
+            }
+        });
+        $(".remove").on("click", function () {
+            //Lấy ra giá tổng của sản phẩm
+            let price_total_each_item = $(this).parent().next().next().next().next().next().children().html().replace(/,/g, '');
+            //Lấy ra giá của mỗi sản phẩm
+            let priceItem = $(this).parent().next().next().next().children().html().replace(/,/g, '');
+            let quantities_Remove = parseInt(price_total_each_item) / parseInt(priceItem);
+            let countProduct2 = $("#countproduct").html();
+            $("#countproduct").html(parseInt(countProduct2) - quantities_Remove);
+            $(this).parent().parent().remove();
+            priceTotal -= parseInt(price_total_each_item);
+            $("#totalprice").html(new Intl.NumberFormat("en-US").format(priceTotal) + 'đ');
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("DeleteItemCart", "Cart")",
+                data: {
+                    id: parseInt($(this).attr("data-id"))
+                },
+                success: function (res) {
+                    if (res == 0) {
+                        document.getElementById("cartItem").innerHTML = `
+                            <tr>
+                                <td colspan="6">Không có sản phẩm nào trong giỏ hàng</td>
+                            </tr>
+                        `
+                    }
+                }
+            });
+        });
+    }
+    );
+</script>
